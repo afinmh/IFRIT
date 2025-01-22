@@ -1,27 +1,18 @@
+<?php
+session_start();
+if (!isset($_SESSION['user_id'])) {
+    header("Location: login.php");
+    exit;
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Galeri</title>
-    <link rel="stylesheet" href="css/histori.css"> <!-- Link to external CSS -->
-    <style>
-        .gallery {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-        .gallery-item {
-            border: 1px solid #ccc;
-            padding: 5px;
-            width: 200px;
-            text-align: center;
-        }
-        .gallery-item img {
-            max-width: 100%;
-            height: auto;
-        }
-    </style>
+    <link rel="stylesheet" href="css/gambar.css"> <!-- Link to external CSS -->
     <script>
         async function loadGallery() {
             try {
