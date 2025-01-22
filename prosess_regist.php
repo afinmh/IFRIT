@@ -14,14 +14,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-
-    // Hash password
-    $hashed_password = password_hash($password, PASSWORD_BCRYPT);
-
     try {
-        // Simpan data ke database
+        // Simpan data ke database tanpa enkripsi password
         $stmt = $conn->prepare("INSERT INTO userakun (username, password) VALUES (?, ?)");
-        $stmt->bind_param("ss", $username, $hashed_password);
+        $stmt->bind_param("ss", $username, $password);
 
         if ($stmt->execute()) {
             // Registrasi berhasil
