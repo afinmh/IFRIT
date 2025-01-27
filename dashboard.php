@@ -20,11 +20,16 @@ if (!isset($_SESSION['user_id'])) {
         var reconnectTimeout = 2000;
         var host = "broker.hivemq.com";
         var port = 8884;
+        var iotStatus = "Disconnect";  // Status default, akan berubah menjadi "Connect" berdasarkan data
+
+        // Variabel untuk menyimpan data sensor yang diterima dari MQTT
+        var sensorData = {};
 
         function onConnectionLost() {
             console.log("Connection lost");
             document.getElementById("status").innerHTML = "Connection Lost";
             connected_flag = 0;
+            iotStatus = "Disconnect"; 
         }
 
         function onFailure(message) {
@@ -41,11 +46,36 @@ if (!isset($_SESSION['user_id'])) {
                 document.getElementById("speaker").innerHTML = payload.speaker;
                 document.getElementById("fire").innerHTML = payload.fire;
                 document.getElementById("distance").innerHTML = payload.distance + " cm";
-                
                 // Update chart data
                 updateCharts(payload);
+                sensorData = payload;
+
+                // Cek jika payload mengandung status "Iot: Connect"
+                if (payload.Car === "Connect") {
+                    iotStatus = "Connect";  // Set status ke Connect jika data Iot Connect
+                    console.log("Iot status: Connect");
+                }
             }
 
+        }
+
+        // Function to post data to the server (API)
+        function postDataToAPI(data) {
+            const apiUrl = "apisensor.php";  // Ganti dengan URL API yang sesuai
+            fetch(apiUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            })
+            .then(response => response.json())
+            .then(responseData => {
+                console.log("Data posted successfully", responseData);
+            })
+            .catch(error => {
+                console.error("Error posting data:", error);
+            });
         }
 
         function onConnect() {
@@ -106,6 +136,20 @@ if (!isset($_SESSION['user_id'])) {
             batteryChart.data.datasets[0].backgroundColor = [color, '#e0e0e0']; 
             document.getElementById("battery-percentage").innerHTML = batteryPercentage + "%";
         }
+
+        // Function to send data every 10 minutes if Iot is "Connect"
+        function sendDataEveryTenMinutes() {
+            if (iotStatus === "Connect" && Object.keys(sensorData).length > 0) {
+                // Kirim data ke API setiap 10 menit
+                console.log("Sending data to API:", sensorData);
+                postDataToAPI(sensorData);
+            } else {
+                console.log("Iot is not connected or no data to send. Data not sent.");
+            }
+        }
+
+        // Set interval untuk mengirim data setiap 10 menit (600000 ms)
+        setInterval(sendDataEveryTenMinutes, 600000);  // 10 menit = 600000 ms
     </script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="css/dashboard.css">
