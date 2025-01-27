@@ -61,8 +61,9 @@ if (!isset($_SESSION['user_id'])) {
 
         // Function to post data to the server (API)
         function postDataToAPI(data) {
-            const apiUrl = "apisensor.php";  // Ganti dengan URL API yang sesuai
-            fetch(apiUrl, {
+            const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
+            const apiUrl = "http://ifrit.great-site.net/apisensor.php";  // Ganti dengan URL API yang sesuai
+            fetch(proxyUrl + apiUrl, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
