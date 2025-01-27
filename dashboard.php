@@ -149,7 +149,7 @@ if (!isset($_SESSION['user_id'])) {
         }
 
         // Set interval untuk mengirim data setiap 10 menit (600000 ms)
-        setInterval(sendDataEveryTenMinutes, 600000);  // 10 menit = 600000 ms
+        setInterval(sendDataEveryTenMinutes, 6000);  // 10 menit = 600000 ms
     </script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="css/dashboard.css">
